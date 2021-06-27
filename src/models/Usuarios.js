@@ -1,16 +1,15 @@
 const Sequelize = require("sequelize");
 const DB = require("../config/database");
-const Noticia = require('./Noticias')
 const Usuario = DB.define(
   "usuarios",
   {
     id: {
       autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER(11),
+      type: Sequelize.INTEGER,
     },
     nombre: {
-      type: Sequelize.STRING(40),
+      type: Sequelize.STRING,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -19,7 +18,7 @@ const Usuario = DB.define(
       }
     },
     usuario: {
-      type: Sequelize.STRING(40),
+      type: Sequelize.STRING,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -32,7 +31,7 @@ const Usuario = DB.define(
       },
     },
     clave: {
-      type: Sequelize.STRING(65),
+      type: Sequelize.STRING,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -42,6 +41,5 @@ const Usuario = DB.define(
     },
   },
 );
-
 
 module.exports = Usuario;

@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const DB = require('../config/database');
 
-const Contacto = DB.define('contactos', {
+const Contacto = DB.define('equipos', {
   id: {
     autoIncrement: true,
     primaryKey: true,
@@ -12,28 +12,29 @@ const Contacto = DB.define('contactos', {
     allowNull: false,
     validate: {
       notEmpty: {
-        msg: 'El nombre para el contacto no puede estas vacío.',
+        msg: 'El nombre para el equipo es necesario.',
+      },
+    },
+    unique: {
+        args: true,
+        msg: 'El equipo con este nombre ya esta registrado.',
+      }
+  },
+  jugadores: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'Debes ingresar el numero de jugadores del equipo.',
       },
     },
   },
-  correo: {
+  director: {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
-      isEmail: {
-        msg: 'Debes ingresar un correo de contacto valido.',
-      },
       notEmpty: {
-        msg: 'El nombre para el contacto no puede estas vacío.',
-      },
-    },
-  },
-  mensaje: {
-    type: Sequelize.TEXT,
-    allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'El mensaje de contácto es necesario.',
+        msg: 'El director del equipo es requerido.',
       },
     },
   },

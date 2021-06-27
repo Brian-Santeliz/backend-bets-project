@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const DB = require('../config/database');
-const Usuario = require('./Usuarios');
+const Autor = require('./Autores');
 const Noticia = DB.define('noticias', {
   id: {
     autoIncrement: true,
@@ -30,23 +30,13 @@ const Noticia = DB.define('noticias', {
       },
     },
   },
-  id_usuario: {
+  id_autor: {
     type: Sequelize.INTEGER,
     references: {
-      model: Usuario,
+      model: Autor,
       key: 'id',
     },
   },
 });
-
-// Foo.belongsTo(Bar, { foreignKey: 'bar_id', targetKey: 'id' });
-// ser.associate = (models) => {
-//   user.hasMany(models.roles, {
-//     foreignKey: 'Id',
-//     sourceKey: 'RoleId',
-//     onDelete: 'cascade',
-//   });
-// };
-
 
 module.exports = Noticia;

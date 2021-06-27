@@ -12,15 +12,15 @@ const Usuario = DB.define('clientes', {
     allowNull: false,
     validate: {
       isEmail: {
-        msg: "Debes ingresar un correo valido.",
+        msg: 'Debes ingresar un correo valido.',
       },
       notEmpty: {
-        msg: "El correo no puede estar vacío.",
+        msg: 'El correo no puede estar vacío.',
       },
     },
     unique: {
       args: true,
-      msg: "Existe un usuario con este correo.",
+      msg: 'Existe un usuario con este correo.',
     },
   },
   nombre: {
