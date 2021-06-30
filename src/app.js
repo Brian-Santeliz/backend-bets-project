@@ -9,7 +9,5 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
-app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'));
-app.use(router)
+app.use('/api',router)
 module.exports = { app };

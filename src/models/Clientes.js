@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 const DB = require('../config/database');
-
-const Usuario = DB.define('clientes', {
+const Cliente = DB.define('clientes', {
   id: {
     autoIncrement: true,
     primaryKey: true,
@@ -30,6 +29,7 @@ const Usuario = DB.define('clientes', {
       notEmpty: {
         msg: 'El nombre no puede estar vacío.',
       },
+     
     },
   },
   coins: {
@@ -41,6 +41,7 @@ const Usuario = DB.define('clientes', {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
+      min: 6,
       notEmpty: {
         msg: 'La clave es requerida',
       },
@@ -48,4 +49,4 @@ const Usuario = DB.define('clientes', {
   },
 });
 
-module.exports = Usuario;
+module.exports = Cliente;

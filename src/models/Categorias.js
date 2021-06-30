@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const DB = require('../config/database');
-const Autor = DB.define('autores', {
+const Categoria = DB.define('categorias', {
   id: {
     autoIncrement: true,
     primaryKey: true,
@@ -11,18 +11,13 @@ const Autor = DB.define('autores', {
     allowNull: false,
     validate: {
       notEmpty: {
-        msg: 'El nombre no puede estar vacío.',
+        msg: 'El nombre de la categoría no puede estar vacío.',
       },
     },
     unique: {
       args: true,
-      msg: 'Existe un autor con este nombre.',
+      msg: 'Esta categoría ya se encuentra registrada.',
     },
-  },
-  pais: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    defaultValue: 'Venezuela',
   },
   fecha: {
     type: Sequelize.DATE,
@@ -31,4 +26,4 @@ const Autor = DB.define('autores', {
   },
 });
 
-module.exports = Autor;
+module.exports = Categoria;

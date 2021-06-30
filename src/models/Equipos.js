@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const DB = require('../config/database');
 
-const Contacto = DB.define('equipos', {
+const Equipo = DB.define('equipos', {
   id: {
     autoIncrement: true,
     primaryKey: true,
@@ -40,4 +40,4 @@ const Contacto = DB.define('equipos', {
   },
 });
 
-module.exports = Contacto;
+module.exports = Equipo;
