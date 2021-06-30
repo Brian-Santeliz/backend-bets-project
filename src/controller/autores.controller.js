@@ -64,7 +64,6 @@ exports.crearAutor = async (req, res) => {
       }
       res.status(400).json({ msg: 'El autor no fue eliminado.' });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ msg: error.message });
     }
   };

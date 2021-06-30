@@ -15,7 +15,6 @@ exports.autenticacionAdmin = (req, res, next) => {
     req.usuario = usuarioAutenticado;
     next();
   } catch (error) {
-    console.log(error);
     res.status(403).json({ msg: 'El token es invalido.' });
   }
 };
@@ -34,7 +33,6 @@ exports.autenticacionCliente = (req, res, next) => {
       coins: datosTokenCliente.coins,
     };
     req.cliente = clienteAutenticado;
-    console.log(req.cliente);
     next();
   } catch (error) {
     res.status(403).json({ msg: 'El token es invalido.' });

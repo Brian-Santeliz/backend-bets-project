@@ -41,7 +41,6 @@ exports.actualizarCategoria = async (req, res) => {
     }
     res.status(400).json({ msg: 'La categoria no fue actualizada.' });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ msg: error.errors[0].message });
   }
 };
