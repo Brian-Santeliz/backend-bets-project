@@ -45,6 +45,15 @@ const Noticia = DB.define('noticias', {
       key: 'id',
     },
   },
+  url_imagen: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'La imagen es requerida.',
+      },
+    },
+  },
 });
 
 module.exports = Noticia;

@@ -3,8 +3,8 @@ const Equipo = require('../models/Equipos');
 const Cliente = require('../models/Clientes');
 const ApuestasCliente = require('../models/ApuestasCliente');
 exports.crearApuesta = async (req, res) => {
-  const { id_equipo1, id_equipo2, fecha, costo, ganancia } = req.body;
-  if (!id_equipo1 || !id_equipo2 || !costo || !ganancia) {
+  const { id_equipo1, id_equipo2, fecha, costo, ganancia, fecha_resultado } = req.body;
+  if (!id_equipo1 || !id_equipo2 || !costo || !ganancia || !fecha_resultado) {
     return res
       .status(400)
       .json({ msg: 'Todos los datos son necesarios para crear la apuesta.' });
@@ -31,6 +31,7 @@ exports.crearApuesta = async (req, res) => {
         id_equipo1,
         id_equipo2,
         fecha,
+        fecha_resultado,
         costo,
         ganancia,
       });
@@ -54,7 +55,7 @@ exports.obtenerApuestas = async (req, res) => {
     const apuestasRegistradas = await Apuestas.findAll();
     const apuestasObtenidas = await Promise.all(
       apuestasRegistradas.map(async (apuesta) => {
-        const { id, id_equipo1, id_equipo2, costo, ganancia, fecha } = apuesta;
+        const { id, id_equipo1, id_equipo2, costo, ganancia, fecha, fecha_resultado } = apuesta;
         const [datosPrimerEquipo] = await Equipo.findAll({
           where: {
             id: id_equipo1,
@@ -65,7 +66,6 @@ exports.obtenerApuestas = async (req, res) => {
             id: id_equipo2,
           },
         });
-        /* A FUTUTO SABER SI SE MODIFICA A UN OBJ Y NO SOLO EL NOMBRE */
         return (objetoApuesta = {
           id,
           id_equipo1: datosPrimerEquipo.nombre,
@@ -73,6 +73,7 @@ exports.obtenerApuestas = async (req, res) => {
           costo,
           ganancia,
           fecha,
+          fecha_resultado
         });
       })
     );
@@ -112,6 +113,7 @@ exports.obtenerApuesta = async (req, res) => {
           costo,
           ganancia,
           fecha,
+          fecha_resultado
         });
       })
     );
@@ -139,38 +141,20 @@ exports.eliminarApuesta = async (req, res) => {
 };
 
 exports.actualizarApuesta = async (req, res) => {
-  /* CONSIDERAR VALIDAD DESDE EL FRONT */
   const { apuestaID } = req.params;
-  const { id_equipo1, id_equipo2, fecha, costo, ganancia } = req.body;
-  if (!id_equipo1 || !id_equipo2 || !costo || !ganancia) {
+  const { fecha, costo, ganancia, fecha_resultado } = req.body;
+  if ( !costo || !ganancia) {
     return res
       .status(400)
       .json({ msg: 'Todos los datos son necesarios para crear la apuesta.' });
   }
-  if (id_equipo2 === id_equipo1) {
-    return res.status(400).json({ msg: 'Los equipos deben ser diferentes.' });
-  }
-  const apuestasDuplicadas = await Apuestas.findAll({
-    where: {
-      id_equipo1,
-      id_equipo2,
-    },
-  });
-  const apuestasDuplicadasDos = await Apuestas.findAll({
-    where: {
-      id_equipo1: id_equipo2,
-      id_equipo2: id_equipo1,
-    },
-  });
   try {
-    if (!apuestasDuplicadas.length && !apuestasDuplicadasDos.length) {
       const [apuestaActualizada] = await Apuestas.update(
         {
-          id_equipo1,
-          id_equipo2,
           costo,
           ganancia,
           fecha,
+          fecha_resultado
         },
         {
           where: {
@@ -184,17 +168,12 @@ exports.actualizarApuesta = async (req, res) => {
           .json({ msg: 'Apuesta actualizada correctamente.' });
       }
       res.status(400).json({ msg: 'La apuesta no se pudo actualizar.' });
-      return;
-    }
-    res.status(400).json({ msg: 'Apuestas registradas previamente.' });
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }
 };
 exports.crearApuestaCliente = async (req, res) => {
   try {
-    /* CAMBIARA A NOMBRE EN LUHGAR DEL ID_EQUIPO */
-    /* QUIZAS SE SAQUE EL ID_CLIENTE DE LA SESSION ACTUAL */
     const { id_cliente, id_apuesta, id_equipo } = req.body;
     if (!id_cliente || !id_apuesta || !id_equipo) {
       return res.status(400).json({
@@ -277,6 +256,7 @@ exports.obtenerApuestasCliente = async (req, res) => {
           id,
           fecha,
           apuestas_acertada,
+          resultado
         } = apuesta;
         const [infoApuesta] = await Apuestas.findAll({
           where: {
@@ -315,6 +295,7 @@ exports.obtenerApuestasCliente = async (req, res) => {
           id_cliente: infoCliente.nombre,
           id_equipo: infoEquipo.nombre,
           apuestas_acertada,
+          resultado
         });
       })
     );
@@ -447,11 +428,21 @@ exports.obtenerApuestaCliente = async (req, res) => {
             id: datosCliente.id,
           },
           id_apuesta: {
-            equipo1: equipo1.nombre,
-            equipo2: equipo2.nombre,
+            equipo1:{
+              nombre: equipo1.nombre,
+              url_imagen:equipo1.url_imagen,
+            },
+            equipo2: {
+              nombre: equipo2.nombre,
+              url_imagen:equipo2.url_imagen,
+            },
             ganancia: infoApuesta.ganancia,
+            fecha_resultado:infoApuesta.fecha_resultado,
           },
-          id_equipo: infoEquipo.nombre,
+          id_equipo: {
+            nombre:infoEquipo.nombre,
+            url_imagen:infoEquipo.url_imagen
+          },
           fecha,
           apuestas_acertada,
         });
@@ -519,7 +510,7 @@ exports.definirApuestaCliente = async (req, res) => {
       apuestaDelCliente.resultado = resultado;
       await apuestaDelCliente.save();
        res.status(200).json({
-        msg: 'Apuesta modificada correctamente, el cliente no ha acertado la apuesta.',
+        msg: 'Apuesta modificada correctamente, el cliente no acertó la apuesta.',
       });
   } catch (error) {
     res.status(500).json({ msg: error.message });

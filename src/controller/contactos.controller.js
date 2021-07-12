@@ -40,7 +40,7 @@ exports.eliminarContacto = async (req, res) => {
       },
     });
     if (contactoEliminado) {
-      return res.status(200).json({ msg: 'Eliminado correctamente' });
+      return res.status(200).json({ msg: 'Mensaje de contácto eliminado correctamente.' });
     }
     res.status(400).json('No se pudo eliminar el contacto.');
   } catch (error) {

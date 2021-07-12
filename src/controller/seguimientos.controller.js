@@ -48,7 +48,6 @@ exports.obtenerSeguimientos = async (req, res) => {
             id: id_cliente,
           },
         });
-        /* SE PUEDEN LLENAR LOS CAMPOS CON OTROS DATOS APARTE DEL NOMBRE */
         const objetoSeguimiento = {
           id,
           fecha,

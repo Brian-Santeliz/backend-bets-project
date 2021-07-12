@@ -1,4 +1,21 @@
 const {  obtenerToken,decodificarToken, decodificarTokenCliente } = require('../utils/datosToken');
+exports.verificarRol = (req, res, next) => {
+  let tokenHeader = req.headers['authorization'];
+  if (!tokenHeader) {
+    return res.status(401).json({ msg: 'El token no ha sido proveído.' });
+  }
+  tokenHeader = obtenerToken(tokenHeader);
+  try {
+    const datosToken = decodificarToken(tokenHeader)
+    const rol = datosToken.rol
+    if(rol !== "Administrador"){
+      return res.status(401).json({msg:'Usuario no autorizado.'})
+    }
+    next();
+  } catch (error) {
+    res.status(403).json({ msg: 'El token es invalido.' });
+  }
+};
 exports.autenticacionAdmin = (req, res, next) => {
   let tokenHeaderAdmin = req.headers['authorization'];
   if (!tokenHeaderAdmin) {

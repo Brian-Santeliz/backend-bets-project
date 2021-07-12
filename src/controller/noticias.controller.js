@@ -4,18 +4,18 @@ const Categorias = require('../models/Categorias');
 
 exports.crearNoticia = async (req, res) => {
   try {
-    const { titulo, descripcion, fecha, id_autor, id_categoria } = req.body;
-    if (!titulo || !descripcion || !id_autor || !id_categoria) {
+    const { titulo, descripcion,  id_autor, id_categoria, url_imagen } = req.body;
+    if (!titulo || !descripcion || !id_autor || !id_categoria || !url_imagen) {
       return res
         .status(200)
-        .json('Debes enviar todos los datos para crear una noticia.');
+        .json({msg:'Debes enviar todos los datos para crear una noticia.'});
     }
     const noticiaCreada = await Noticias.create({
       titulo,
       descripcion,
-      fecha,
       id_autor,
-      id_categoria
+      id_categoria,
+      url_imagen
     });
     if (noticiaCreada) {
      return  res.status(201).json({ msg: 'Noticia creada correctamente.' });
@@ -29,7 +29,7 @@ exports.obtenerNoticias = async (req, res) => {
   try {
     const noticasRegistradas = await Noticias.findAll({});
     const noticasObtenidasPromesas = noticasRegistradas.map(async (noticia) => {
-      const { id_autor, descripcion, id, fecha, titulo, id_categoria } = noticia;
+      const { id_autor, descripcion, id, fecha, titulo, id_categoria, url_imagen } = noticia;
       const [informacionAutor] = await Autores.findAll({
         where: {
           id: id_autor,
@@ -46,7 +46,8 @@ exports.obtenerNoticias = async (req, res) => {
         fecha,
         titulo,
         id_autor: informacionAutor.nombre,
-        id_categoria:informacionCategoria.nombre
+        id_categoria:informacionCategoria.nombre,
+        url_imagen
       };
       return noticiaConFormato;
     });
@@ -72,7 +73,7 @@ exports.obtenerNoticia = async (req, res) => {
     }
     const noticiaEncontrada = await Promise.all(
       noticiaRegistrada.map(async (noticia) => {
-        const { id_autor, descripcion, id, fecha, titulo, id_categoria } = noticia;
+        const { id_autor, descripcion, id, fecha, titulo, id_categoria, url_imagen } = noticia;
         const informacionAutor = await Autores.findAll({
           where: {
             id: id_autor,
@@ -89,7 +90,8 @@ exports.obtenerNoticia = async (req, res) => {
           fecha,
           titulo,
           id_autor: informacionAutor[0].nombre,
-          id_categoria:informacionCategoria.nombre
+          id_categoria:informacionCategoria.nombre,
+           url_imagen
         };
         return noticiaConFormato;
       })
@@ -101,10 +103,9 @@ exports.obtenerNoticia = async (req, res) => {
 };
 exports.actualizarNoticia = async (req, res) => {
   try {
-    //HACER SELECT  *  FROM AL AUTOR && CATEGORIA PARA EL ID
     const { noticiaID } = req.params;
-    const { fecha, descripcion, titulo, id_autor, id_categoria} = req.body;
-    if (!descripcion || !titulo || !id_autor || !id_categoria) {
+    const { fecha, descripcion, titulo, id_autor, id_categoria, url_imagen} = req.body;
+    if (!descripcion || !titulo || !id_autor || !id_categoria || !url_imagen) {
       return res.status(400).json({
         msg: 'Todos los datos son necesarios para actualizar una noticia.',
       });
@@ -115,7 +116,8 @@ exports.actualizarNoticia = async (req, res) => {
         descripcion,
         titulo,
         id_autor,
-        id_categoria
+        id_categoria,
+        url_imagen
       },
       {
         where: {
@@ -165,7 +167,7 @@ exports.obtenerNoticiaCategoria = async (req,res)=>{
       }
     });
     const noticiasObtenidaCategoria = await Promise.all(noticiasObtenidas.map(async(noticia)=>{
-      const { id_autor, descripcion, id, fecha, titulo } = noticia;
+      const { id_autor, descripcion, id, fecha, titulo, url_imagen } = noticia;
       const [informacionAutor] = await Autores.findAll({
         where: {
           id: id_autor,
@@ -177,7 +179,8 @@ exports.obtenerNoticiaCategoria = async (req,res)=>{
         fecha,
         titulo,
         id_autor: informacionAutor.nombre,
-        id_categoria:resultadoCategoria[0].nombre
+        id_categoria:resultadoCategoria[0].nombre,
+        url_imagen
       };
     }));
     res.status(200).json(noticiasObtenidaCategoria)

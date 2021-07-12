@@ -89,7 +89,10 @@ exports.obtenerRecargas = async (req, res) => {
           apellido,
           numero_tarjeta,
           tarjeta,
-          id_cliente: clienteInfo.correo,
+          id_cliente:{
+            correo:clienteInfo.correo,
+            coins:clienteInfo.coins
+          },
           fecha,
         };
       })
@@ -170,7 +173,7 @@ exports.recargarCliente = async (req, res) => {
   if (coinsARecargar > 255) {
     return res
       .status(400)
-      .json({ msg: 'El montó de recarga es de 255 coins.' });
+      .json({ msg: 'El montó de recarga es mayor a 255 coins.' });
   }
   try {
     const [recargaObtenida] = await Recarga.findAll({
@@ -184,10 +187,11 @@ exports.recargarCliente = async (req, res) => {
         id: idClienteARecargar,
       },
     });
+    const coinsAntesDeRecarga = JSON.parse(JSON.stringify(clienteObtenido.coins))
     clienteObtenido.coins += coinsARecargar;
     if (clienteObtenido.coins > 800) {
       return res.status(400).json({
-        msg: `Este cliente ha superado las 800 coins de recarga, debes ingresar un monto de recarga inferior a: ${coinsARecargar}.`,
+        msg: `Este cliente ha superado las 800 coins de recarga, debes ingresar un monto de recarga inferior a: ${coinsARecargar}, actualmente cuenta con ${coinsAntesDeRecarga} coins.`,
       });
     }
     const resultado = await clienteObtenido.save();

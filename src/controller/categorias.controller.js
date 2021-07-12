@@ -22,7 +22,6 @@ exports.actualizarCategoria = async (req, res) => {
   const { categoriaID } = req.params;
   const { nombre, fecha } = req.body;
   try {
-    /* PROBAR HTML AL ACTUALIZAR LA FECHA A VER QUE TAL SE FUARDA */
     const [categoriaActualizada] = await Categorias.update(
       {
         nombre,

@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const DB = require('../config/database');
+const Categoria = require('./Categorias');
 
 const Equipo = DB.define('equipos', {
   id: {
@@ -36,6 +37,22 @@ const Equipo = DB.define('equipos', {
       notEmpty: {
         msg: 'El director del equipo es requerido.',
       },
+    },
+  },
+  url_imagen: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'La imagen del equipo es requerida.',
+      },
+    },
+  },
+  id_categoria: {
+    type: Sequelize.INTEGER,
+    references: {
+      model: Categoria,
+      key: 'id',
     },
   },
 });

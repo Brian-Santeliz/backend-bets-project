@@ -38,6 +38,10 @@ const Apuesta = DB.define('apuestas', {
     allowNull: false,
     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
   },
+  fecha_resultado: {
+    type: Sequelize.DATE,
+    allowNull: false,
+  },
   costo: {
     type: Sequelize.INTEGER,
     allowNull: false,

@@ -19,7 +19,7 @@ const Cliente = DB.define('clientes', {
     },
     unique: {
       args: true,
-      msg: 'Existe un usuario con este correo.',
+      msg: 'Existe un cliente con este correo.',
     },
   },
   nombre: {

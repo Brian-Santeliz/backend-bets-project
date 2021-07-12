@@ -46,8 +46,7 @@ exports.crearAutor = async (req, res) => {
       }
       res.status(400).json({ msg: 'El Autor no fue actualizado.' });
     } catch (error) {
-      res.status(500).json({ msg: error.message });
-
+      res.status(500).json({ msg: error.errors[0].message });
     }
   };
   

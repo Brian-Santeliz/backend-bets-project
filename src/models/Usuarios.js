@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const DB = require('../config/database');
+const Roles = require('./Roles')
 const Usuario = DB.define('usuarios', {
   id: {
     autoIncrement: true,
@@ -35,6 +36,13 @@ const Usuario = DB.define('usuarios', {
       notEmpty: {
         msg: 'La clave es necesaria.',
       },
+    },
+  },
+  id_rol: {
+    type: Sequelize.INTEGER,
+    references: {
+      model: Roles,
+      key: 'id',
     },
   },
 });

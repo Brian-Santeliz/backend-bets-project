@@ -1,8 +1,8 @@
 const Equipos = require('../models/Equipos');
 
 exports.crearEquipo = async (req, res) => {
-  const { nombre, jugadores, director } = req.body;
-  if (!nombre || !jugadores || !director) {
+  const { nombre, jugadores, director, url_imagen } = req.body;
+  if (!nombre || !jugadores || !director || !url_imagen) {
     return res
       .status(400)
       .json('Debes enviar todos los datos para registrar un Equipo.');
@@ -12,6 +12,7 @@ exports.crearEquipo = async (req, res) => {
       nombre,
       jugadores,
       director,
+      url_imagen
     });
     if (equipoCreado) {
       return res.status(201).json({ msg: 'Equipo registrado correctamente.' });
@@ -31,13 +32,14 @@ exports.obtenerEquipos = async (req, res) => {
 };
 exports.actualizarEquipo = async (req, res) => {
   const { equipoID } = req.params;
-  const { nombre, director, jugadores } = req.body;
+  const { nombre, director, jugadores, url_imagen } = req.body;
   try {
     const [equipoActualizado] = await Equipos.update(
       {
         jugadores,
         director,
         nombre,
+        url_imagen
       },
       {
         where: {
