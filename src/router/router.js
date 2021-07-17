@@ -10,7 +10,7 @@ const controladorCategorias = require('../controller/categorias.controller');
 const controladorApuestas = require('../controller/apuestas.controller');
 const controladorRecargas = require('../controller/recargas.controller');
 const rolesController = require('../controller/roles.controller');
-const { autenticacionAdmin, autenticacionCliente, verificarRol } = require('../middleware/autenticacionToken')
+const { autenticacionAdmin, autenticacionCliente, verificarRol, verificarToken } = require('../middleware/autenticacionToken')
 const router = Router();
 
 router.post('/login-usuario', controladorUsuarios.loginUsuario)
@@ -42,12 +42,13 @@ router.get('/obtener-noticias/:categoria', controladorNoticias.obtenerNoticiaCat
 
 router.post('/crear-equipo', verificarRol, autenticacionAdmin, controladorEquipo.crearEquipo);
 router.get('/obtener-equipos',  controladorEquipo.obtenerEquipos);
+router.get('/obtener-equipos/:categoria',  controladorEquipo.obtenerEquiposPorCategoria);
 router.get('/obtener-equipo/:equipoID', controladorEquipo.obtenerEquipo);
 router.put('/actualizar-equipo/:equipoID', verificarRol, autenticacionAdmin, controladorEquipo.actualizarEquipo);
 router.delete('/eliminar-equipo/:equipoID', verificarRol, autenticacionAdmin, controladorEquipo.eliminarEquipo);
 
 router.get('/obtener-seguimientos', autenticacionAdmin, controladorSeguimientos.obtenerSeguimientos);
-router.delete('/eliminar-seguimiento/:seguimientoID', verificarRol, autenticacionAdmin, controladorSeguimientos.eliminarSeguimiento);
+router.delete('/eliminar-seguimiento/:seguimientoID', verificarToken, controladorSeguimientos.eliminarSeguimiento);
 
 router.post('/crear-categoria', verificarRol, autenticacionAdmin, controladorCategorias.crearCategoria);
 router.put('/actualizar-categoria/:categoriaID', verificarRol, autenticacionAdmin, controladorCategorias.actualizarCategoria);
@@ -61,7 +62,7 @@ router.delete('/eliminar-apuesta/:apuestaID', verificarRol, autenticacionAdmin, 
 router.put('/actualizar-apuesta/:apuestaID', verificarRol, autenticacionAdmin, controladorApuestas.actualizarApuesta);
 
 router.get('/obtener-solicitudRecargas', verificarRol, autenticacionAdmin, controladorRecargas.obtenerRecargas);
-router.delete('/eliminar-solicitudRecarga/:recargaID', verificarRol, autenticacionAdmin, controladorRecargas.eliminarRecarga);
+router.delete('/eliminar-solicitudRecarga/:recargaID', verificarToken, controladorRecargas.eliminarRecarga);
 router.get('/obtener-solicitudRecarga/:recargaID', verificarRol, autenticacionAdmin, controladorRecargas.obtenerRecarga);
 router.put('/recargar-cliente/:recargaID', verificarRol, autenticacionAdmin, controladorRecargas.recargarCliente)
 
@@ -75,9 +76,11 @@ router.post('/cliente/login-cliente', controladorClientes.loginCliente)
 router.post('/cliente/registro-cliente', controladorClientes.registroCliente);
 router.post('/cliente/crear-apuestaCliente', autenticacionCliente, controladorApuestas.crearApuestaCliente);
 router.post('/cliente/solicitar-recarga', autenticacionCliente, controladorRecargas.crearSolicitudRecarga);
+router.put('/cliente/actualizar-recarga/:solicitudID', autenticacionCliente, controladorRecargas.actualizarSolicitudCliente);
 router.post('/cliente/crear-seguimiento', autenticacionCliente, controladorSeguimientos.crearSeguimiento);
 router.get('/cliente/obtener-seguimientosCliente', autenticacionCliente, controladorSeguimientos.obtenerSeguimientosCliente);
 router.get('/cliente/obtener-solicitudRecargaCliente', autenticacionCliente, controladorRecargas.obtenerRecargaCliente);
+router.get('/cliente/obtener-coins/:clienteID', autenticacionCliente, controladorRecargas.obtenerCoinsCliente);
 router.get('/cliente/obtener-apuestasDelCliente', autenticacionCliente, controladorApuestas.obtenerApuestasDelCliente);
 
 module.exports = router;

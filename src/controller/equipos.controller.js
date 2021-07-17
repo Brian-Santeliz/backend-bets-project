@@ -1,7 +1,8 @@
 const Equipos = require('../models/Equipos');
+const Categorias = require('../models/Categorias');
 
 exports.crearEquipo = async (req, res) => {
-  const { nombre, jugadores, director, url_imagen } = req.body;
+  const { nombre, jugadores, director, url_imagen, id_categoria } = req.body;
   if (!nombre || !jugadores || !director || !url_imagen) {
     return res
       .status(400)
@@ -12,7 +13,8 @@ exports.crearEquipo = async (req, res) => {
       nombre,
       jugadores,
       director,
-      url_imagen
+      url_imagen,
+      id_categoria
     });
     if (equipoCreado) {
       return res.status(201).json({ msg: 'Equipo registrado correctamente.' });
@@ -25,21 +27,44 @@ exports.crearEquipo = async (req, res) => {
 exports.obtenerEquipos = async (req, res) => {
   try {
     const equipos = await Equipos.findAll();
-    res.status(200).json(equipos);
+   const equiposObtenidos = await Promise.all(equipos.map(async(equipo)=>{
+      const {
+        id, 
+        nombre,
+        jugadores,
+        director,
+        url_imagen,
+        id_categoria} = equipo;
+        const [categoriaInformacion] = await Categorias.findAll({
+          where:{
+            id:id_categoria
+          }
+        });
+        return {
+          id, 
+          nombre,
+        jugadores,
+        director,
+        url_imagen,
+        id_categoria:categoriaInformacion.nombre
+        }
+    }))
+    res.status(200).json(equiposObtenidos);
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }
 };
 exports.actualizarEquipo = async (req, res) => {
   const { equipoID } = req.params;
-  const { nombre, director, jugadores, url_imagen } = req.body;
+  const { nombre, director, jugadores, url_imagen, id_categoria } = req.body;
   try {
     const [equipoActualizado] = await Equipos.update(
       {
         jugadores,
         director,
         nombre,
-        url_imagen
+        url_imagen,
+        id_categoria
       },
       {
         where: {
@@ -68,7 +93,29 @@ exports.obtenerEquipo = async (req, res) => {
         msg: 'El equipoID no corresponde a ninguno equipo registrado.',
       });
     }
-    res.status(200).json(equipoRegistrado);
+    const equipoPorId = await Promise.all(equipoRegistrado.map(async(equipo)=>{
+      const {
+        id, 
+        nombre,
+        jugadores,
+        director,
+        url_imagen,
+        id_categoria} = equipo;
+        const [categoriaInformacion] = await Categorias.findAll({
+          where:{
+            id:id_categoria
+          }
+        });
+        return {
+          id, 
+          nombre,
+        jugadores,
+        director,
+        url_imagen,
+        id_categoria:categoriaInformacion.nombre
+        }
+    }))
+    res.status(200).json(equipoPorId);
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }
@@ -89,3 +136,48 @@ exports.eliminarEquipo = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+exports.obtenerEquiposPorCategoria = async(req,res)=>{
+  const {categoria} = req.params;
+  try {
+    const resultadoCategoria = await Categorias.findAll({
+      where:{
+        nombre:categoria
+      }
+    });
+    if(!resultadoCategoria.length){
+      return res.status(400).json({msg:'Esta categoria no existe.'})
+    }
+    const idCategoria = resultadoCategoria[0].id;
+    const equiposObtenidos = await Equipos.findAll({
+      where:{
+        id_categoria:idCategoria
+      }
+    });
+    const equiposPorCategoria = await Promise.all(equiposObtenidos.map(async(equipo)=>{
+      const {
+        id, 
+        nombre,
+        jugadores,
+        director,
+        url_imagen,
+        id_categoria} = equipo;
+        const [categoriaInformacion] = await Categorias.findAll({
+          where:{
+            id:id_categoria
+          }
+        });
+        return {
+          id, 
+          nombre,
+        jugadores,
+        director,
+        url_imagen,
+        id_categoria:categoriaInformacion.nombre
+        }
+    }));
+    res.status(200).json(equiposPorCategoria)
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+    
+  }
+}

@@ -50,6 +50,7 @@ const Equipo = DB.define('equipos', {
   },
   id_categoria: {
     type: Sequelize.INTEGER,
+    allowNull: true,
     references: {
       model: Categoria,
       key: 'id',

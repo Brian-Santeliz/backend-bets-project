@@ -16,7 +16,7 @@ exports.crearContacto = async (req, res) => {
     if (contactoRegistrado) {
       return res
         .status(201)
-        .json({ msg: 'Tu mensaje ha sido guardado correctamente, gracias!' });
+        .json({ msg: 'Tu mensaje ha sido guardado correctamente, Gracias por contáctarnos!' });
     }
     res.status(400).json({msg:'No se pudo guardar el mensaje de contacto.'})
   } catch (error) {

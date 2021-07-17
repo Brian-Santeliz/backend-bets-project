@@ -1,6 +1,7 @@
 const Equipos = require('../models/Equipos');
 const Seguimientos = require('../models/Seguimientos');
 const Clientes = require('../models/Clientes');
+const Categorias = require('../models/Categorias');
 
 exports.crearSeguimiento = async (req, res) => {
   const { id_equipo, id_cliente } = req.body;
@@ -94,20 +95,29 @@ exports.obtenerSeguimientosCliente = async (req, res) => {
         .status(200)
         .json({ msg: 'No existe seguimientos a equipos de este cliente.' });
     }
-    seguimientosDelCliente.map(async (seguimiento) => {
+    const seguimientosObtenidos = await Promise.all(seguimientosDelCliente.map(async (seguimiento) => {
       const { id, id_equipo, fecha } = seguimiento;
       const [equipoInformacion] = await Equipos.findAll({
         where: {
           id: id_equipo,
         }, 
       });
-      return (seguimientosDelCliente = {
+     const [categoriaInformacion ] = await Categorias.findAll({
+        where:{
+          id:equipoInformacion.id_categoria
+        }
+      })
+      return {
         id,
-        id_equipo: equipoInformacion.nombre,
+        id_equipo:{
+          nombre: equipoInformacion.nombre,
+          logo:equipoInformacion.url_imagen,
+          categoria:categoriaInformacion.nombre
+        },
         fecha,
-      });
-    });
-    res.status(200).json(seguimientosDelCliente);
+      }
+    }));
+    res.status(200).json(seguimientosObtenidos);
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }

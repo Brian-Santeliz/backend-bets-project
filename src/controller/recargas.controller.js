@@ -8,7 +8,7 @@ exports.crearSolicitudRecarga = async (req, res) => {
       msg: 'Debes enviar todos los datos para solicitar una recarga.',
     });
   }
-  if (JSON.stringify(numero_tarjeta).length > 16) {
+  if (numero_tarjeta.length !== 16) {
     return res
       .status(400)
       .json({ msg: 'El número de la tarjeta debe ser de 16 digítos.' });
@@ -251,3 +251,66 @@ exports.obtenerRecargaCliente = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+exports.actualizarSolicitudCliente = async(req,res)=>{
+  const {solicitudID} = req.params;
+  const {nombre, apellido, tarjeta, numero_tarjeta, id_cliente} = req.body;
+  if (!nombre || !apellido || !tarjeta || !numero_tarjeta) {
+    return res.status(400).json({
+      msg: 'Debes enviar todos los datos para solicitar una recarga.',
+    });
+  }
+  if (numero_tarjeta.length !== 16) {
+    return res
+      .status(400)
+      .json({ msg: 'El número de la tarjeta debe ser de 16 digítos.' });
+  }
+  try {
+    const existeCliente = await Cliente.findAll({
+      where: {
+        id: id_cliente,
+      },
+    });
+    if (!existeCliente.length) {
+      return res
+        .status(400)
+        .json({ msg: 'Este cliente no se encuentra registrado.' });
+    }
+    const [recargaActualizada] = await Recarga.update(
+      {
+        nombre, apellido, tarjeta, numero_tarjeta
+      },
+      {
+        where: {
+          id: solicitudID,
+        },
+      }
+    );
+    if (recargaActualizada) {
+     return res.status(200).json({ msg: 'La solicitud de recarga en espera ha sido modificada correctamente.' });
+    }
+    res.status(400).json({ msg: 'La solicitud de recarga en espera no ha sido modificada .' });
+  } catch (error) {
+    res.status(500).json({ msg: error.message })
+  }
+}
+exports.obtenerCoinsCliente = async(req,res)=>{
+ const {clienteID} = req.params;
+ if(!clienteID){
+   return res.status(400).json({msg:'El clienteID es necesario.'})
+ }
+  try {
+    const clienteObtenido = await Cliente.findAll({
+      where: {
+        id: clienteID,
+      },
+    });
+    if (!clienteObtenido.length) {
+      return res
+        .status(400)
+        .json({ msg: 'Este cliente no se encuentra registrado.' });
+    }
+    res.status(200).json(clienteObtenido[0].coins)
+ } catch (error) {
+  res.status(500).json({ msg: error.message })
+ } 
+}
